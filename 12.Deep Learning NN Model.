@@ -1,0 +1,21 @@
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Input
+from keras.utils import to_categorical
+
+X = np.random.rand(1000, 100)
+y = to_categorical(np.random.randint(10, size=1000), num_classes=10)
+
+model = Sequential()
+model.add(Input(shape=(100,)))            
+model.add(Dense(128, activation='relu')) 
+model.add(Dense(64, activation='relu'))  
+model.add(Dense(32, activation='relu')) 
+model.add(Dense(10, activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+model.fit(X, y, epochs=3, verbose=0)
+
+loss, acc = model.evaluate(X, y, verbose=0)
+print("Loss:", round(loss, 4))
+print("Accuracy:", round(acc, 4))
