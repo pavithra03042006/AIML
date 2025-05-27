@@ -1,0 +1,43 @@
+import heapq
+
+def astar(graph, heuristic, start, goal):
+    # Priority queue: (f(x), g(x), node, path)
+    queue = [(heuristic[start], 0, start, [start])]
+    visited = set()
+    
+    while queue:
+        f, g, node, path = heapq.heappop(queue)
+        if node == goal:
+            return path
+        if node in visited:
+            continue
+        visited.add(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                g_new = g + graph[node][neighbor]  # g(x): cost so far
+                h_new = heuristic[neighbor]        # h(x): estimated cost to goal
+                f_new = g_new + h_new              # f(x) = g(x) + h(x)
+                heapq.heappush(queue, (f_new, g_new, neighbor, path + [neighbor]))
+    return None
+
+# Input graph
+graph = {}
+for v in input("Enter the vertices: ").split():
+    graph[v] = {}
+for _ in range(int(input("Enter number of Edges: "))):
+    u, v, w = input("Edge (u v w): ").split()
+    w = int(w)
+    graph[u][v] = w
+    graph[v][u] = w 
+
+# Input heuristic values
+heuristic = {}
+print("Enter heuristic values for each vertex:")
+for v in graph:
+    heuristic[v] = int(input(f"Heuristic for {v}: "))
+
+start = input("Start: ")
+goal = input("Goal: ")
+
+path = astar(graph, heuristic, start, goal)
+print("Path:", ' -> '.join(path) if path else "No path")
