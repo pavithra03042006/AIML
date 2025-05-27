@@ -1,0 +1,17 @@
+from collections import deque
+n = int(input("Enter the number of Vertices: "))
+graph = {i: set() for i in range(n)}
+for _ in range(int(input("Enter the number of Edges: "))):
+    u, v = map(int, input("Edge (u v): ").split())
+    graph[u].add(v)
+    graph[v].add(u)
+def bfs(start):
+    visited, queue = set(), deque([start])
+    while queue:
+        node = queue.popleft()
+        if node in visited: continue
+        print(node, end=" ")
+        visited.add(node)
+        queue.extend(graph[node] - visited)
+print("\nBFS Traversal:")
+bfs(int(input("Start vertex: ")))
