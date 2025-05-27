@@ -1,0 +1,15 @@
+n = int(input("Enter the number of Vertices: "))
+graph = {i: [] for i in range(n)}
+for _ in range(int(input("Enter the number of Edges: "))):
+    u, v = map(int, input("Edge (u v): ").split())
+    graph[u].append(v)
+    graph[v].append(u)  
+def dfs(node, visited):
+    if node in visited:
+        return
+    print(node, end=" ")
+    visited.add(node)
+    for neighbor in graph[node]:
+        dfs(neighbor, visited)
+visited = set()
+dfs(int(input("Start vertex: ")), visited)
