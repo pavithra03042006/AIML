@@ -1,7 +1,7 @@
 import heapq
 
 def astar(graph, heuristic, start, goal):
-    # Priority queue: (f(x), g(x), node, path)
+    
     queue = [(heuristic[start], 0, start, [start])]
     visited = set()
     
@@ -14,13 +14,13 @@ def astar(graph, heuristic, start, goal):
         visited.add(node)
         for neighbor in graph[node]:
             if neighbor not in visited:
-                g_new = g + graph[node][neighbor]  # g(x): cost so far
-                h_new = heuristic[neighbor]        # h(x): estimated cost to goal
-                f_new = g_new + h_new              # f(x) = g(x) + h(x)
+                g_new = g + graph[node][neighbor]  
+                h_new = heuristic[neighbor]       
+                f_new = g_new + h_new              
                 heapq.heappush(queue, (f_new, g_new, neighbor, path + [neighbor]))
     return None
 
-# Input graph
+
 graph = {}
 for v in input("Enter the vertices: ").split():
     graph[v] = {}
@@ -30,7 +30,7 @@ for _ in range(int(input("Enter number of Edges: "))):
     graph[u][v] = w
     graph[v][u] = w 
 
-# Input heuristic values
+
 heuristic = {}
 print("Enter heuristic values for each vertex:")
 for v in graph:
