@@ -1,54 +1,44 @@
 import heapq
-
-def memory_bounded_astar(graph, heuristic, start, goal, max_size):
-  
+def memory_bounded_astar(graph, heuristic, start, goal, memory_limit):
     queue = [(heuristic[start], 0, start, [start])]
     visited = set()
-    
     while queue:
-        # Sort by lowest f(x)
-        queue.sort()
-        f, g, node, path = queue.pop(0)  
+        if len(queue) > memory_limit:
+            queue.sort(reverse=True) 
+            queue.pop(0)  
+
+        f, g, node, path = heapq.heappop(queue)
         
         if node == goal:
             return path
-        
         if node in visited:
             continue
         visited.add(node)
         
-        for neighbor in graph[node]:
+        for neighbor, cost in graph[node]:
             if neighbor not in visited:
-                g_new = g + graph[node][neighbor]
-                h_new = heuristic[neighbor]
+                g_new = g + cost
+                h_new = heuristic.get(neighbor, float('inf'))
                 f_new = g_new + h_new
-                queue.append((f_new, g_new, neighbor, path + [neighbor]))
-                
-      
-        if len(queue) > max_size:
-            # Remove the node with the largest f(x)
-            queue.sort(reverse=True)  # sort by largest f(x) first
-            queue.pop(0)
+                heapq.heappush(queue, (f_new, g_new, neighbor, path + [neighbor]))
     
     return None
 
-graph = {}
-for v in input("Enter the vertices: ").split():
-    graph[v] = {}
-for _ in range(int(input("Enter number of Edges: "))):
-    u, v, w = input("Edge (u v w): ").split()
-    w = int(w)
-    graph[u][v] = w
-    graph[v][u] = w 
-
+n = int(input("Enter the number of vertices: "))
+graph = {i: [] for i in range(n)}
 heuristic = {}
-print("Enter heuristic values for each vertex:")
-for v in graph:
-    heuristic[v] = int(input(f"Heuristic for {v}: "))
 
-start = input("Start node: ")
-goal = input("Goal node: ")
-max_memory = int(input("Enter maximum memory limit (queue size): "))
+e = int(input("Enter the number of edges: "))
+for _ in range(e):
+    u, v, w, h = map(int, input("Edge (u v weight heuristic): ").split())
+    graph[u].append((v, w))
+    graph[v].append((u, w)) 
+    if v not in heuristic:
+        heuristic[v] = h 
 
-path = memory_bounded_astar(graph, heuristic, start, goal, max_memory)
-print("Path:", ' -> '.join(path) if path else "No path found")
+start = int(input("Enter the start vertex: "))
+goal = int(input("Enter the goal vertex: "))
+memory_limit = int(input("Enter the memory limit (max number of nodes in queue): "))
+
+path = memory_bounded_astar(graph, heuristic, start, goal, memory_limit)
+print("Path:", ' -> '.join(map(str, path)) if path else "No path found")
